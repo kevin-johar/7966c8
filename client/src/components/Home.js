@@ -82,7 +82,9 @@ const Home = ({ user, logout }) => {
     (recipientId, message) => {
       conversations.forEach((convo) => {
         if (convo.otherUser.id === recipientId) {
-          convo.messages.push(message);
+          convo.messages.unshift(message);
+          convo.messages = [...convo.messages];
+
           convo.latestMessageText = message.text;
           convo.id = message.conversationId;
         }
@@ -105,10 +107,11 @@ const Home = ({ user, logout }) => {
         setConversations((prev) => [newConvo, ...prev]);
       }
 
-      // TODO: potential bug? Need else here?
       conversations.forEach((convo) => {
         if (convo.id === message.conversationId) {
-          convo.messages.push(message);
+          convo.messages.unshift(message)
+          convo.messages = [...convo.messages]
+          
           convo.latestMessageText = message.text;
         }
       });
