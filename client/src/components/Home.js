@@ -113,7 +113,7 @@ const Home = ({ user, logout }) => {
       tempConversations.forEach((convo) => {
         if (convo.id === message.conversationId) {
           convo.messages = [...convo.messages, message]
-          
+
           convo.latestMessageText = message.text;
         }
       });
@@ -155,14 +155,6 @@ const Home = ({ user, logout }) => {
     );
   }, []);
 
-  const reverseArr = (arr) => {
-    const temp = arr.slice();
-    for(let i = 0; i < Math.floor(temp.length / 2); i++) {
-      [temp[i], temp[temp.length - 1 - i]] = [temp[temp.length - 1 - i], temp[i]];
-    }
-    return temp;
-  };
-
   // Lifecycle
 
   useEffect(() => {
@@ -197,10 +189,6 @@ const Home = ({ user, logout }) => {
     const fetchConversations = async () => {
       try {
         const { data } = await axios.get("/api/conversations");
-        data.map((convo) => {
-          convo.messages = [...reverseArr(convo.messages)];
-          return convo;
-        });
         setConversations(data);
       } catch (error) {
         console.error(error);
