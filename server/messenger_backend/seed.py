@@ -1,5 +1,5 @@
 from django.db import migrations
-from messenger_backend.models import User, Conversation, Message
+from messenger_backend.models import User, Conversation, Message, ConversationUserReadStatus
 
 
 def seed():
