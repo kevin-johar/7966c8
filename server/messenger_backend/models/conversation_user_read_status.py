@@ -23,7 +23,8 @@ class ConversationUserReadStatus(utils.CustomModel):
     class Meta: 
         constraints = [
             models.UniqueConstraint(
-                fields = ["conversationId", "userId"]
+                fields = ['conversationId', 'userId'],
+                name='conversation_user_read_status'
             )
         ]
 
