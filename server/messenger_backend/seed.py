@@ -1,4 +1,5 @@
 from django.db import migrations
+from django.db.models import Q
 from messenger_backend.models import User, Conversation, Message, ConversationUserReadStatus
 
 
@@ -45,6 +46,16 @@ def seed():
         text="Share photo of your city, please",
     )
     messages.save()
+
+    # userId = User.objects.filter(username="santiago").values('id')[0]['id']
+    # conversationId = Conversation.objects.values('id')[0]['id']
+    userId = User.objects.filter(username="santiago")[0]
+    conversationId = Conversation.objects[0]
+
+    conversationUserReadStatus = ConversationUserReadStatus(userId=userId, conversationId=conversationId)
+    conversationUserReadStatus.save()
+
+    print(ConversationUserReadStatus.values())
 
     chiumbo = User(
         username="chiumbo",
