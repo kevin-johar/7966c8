@@ -101,7 +101,7 @@ const Home = ({ user, logout }) => {
     ).map(convo => convo.id)[0];
 
     try {
-      const { data } = await axios.post(`/api/conversations/${conversationId}/users/${userId}read`);
+      const { data } = await axios.post(`/api/conversations/${conversationId}/users/${user.id}read`);
       console.log(data);
     } catch (error) {
       console.error(error);
