@@ -5,7 +5,7 @@ from . import utils
 from .conversation import Conversation
 from .user import User
 
-class ConversationUserReadStatus(utils.CustomModel):
+class ConversationUser(utils.CustomModel):
     conversation = models.ForeignKey(
         Conversation, 
         on_delete=models.CASCADE,
@@ -24,20 +24,21 @@ class ConversationUserReadStatus(utils.CustomModel):
         constraints = [
             models.UniqueConstraint(
                 fields = ['conversationId', 'userId'],
-                name='conversation_user_read_status'
+                name='conversation_user'
             )
         ]
 
     # Necessary for debugging purposes
     createdAt = models.DateTimeField(auto_now_add=True, db_index=True)
+    # Tracks when last read status was
     updatedAt = models.DateTimeField(auto_now=True)
 
     # Find read status timestamp given conversationId and userId
-    def find_conversation_user_read_status(conversationId, userId):
+    def find_conversation_user(conversationId, userId):
         try:
-            return ConversationReadStatus.objects.get(
+            return Conversation.objects.get(
                 conversationId=conversationId, 
                 userId=userId
             )
-        except ConversationUserReadStatus.DoesNotExist:
+        except ConversationUser.DoesNotExist:
             return None

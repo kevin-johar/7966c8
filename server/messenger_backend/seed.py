@@ -1,6 +1,6 @@
 from django.db import migrations
 from django.db.models import Q
-from messenger_backend.models import User, Conversation, Message, ConversationUserReadStatus
+from messenger_backend.models import User, Conversation, Message, ConversationUser
 
 
 def seed():
@@ -51,8 +51,8 @@ def seed():
 # Adding a read_status entry for thomas for the conversation involving him and santiago
     userId = User.objects.filter(username="santiago").values('id')[0]['id']
     conversationId = Conversation.objects.values('id')[0]['id']
-    conversationUserReadStatus = ConversationUserReadStatus(user_id=userId, conversation_id=conversationId)
-    conversationUserReadStatus.save()
+    conversationUser = ConversationUser(user_id=userId, conversation_id=conversationId)
+    conversationUser.save()
 
     chiumbo = User(
         username="chiumbo",
