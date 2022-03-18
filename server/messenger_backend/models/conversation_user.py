@@ -23,7 +23,7 @@ class ConversationUser(utils.CustomModel):
     class Meta: 
         constraints = [
             models.UniqueConstraint(
-                fields = ['conversationId', 'userId'],
+                fields = ['conversation', 'user'],
                 name='conversation_user'
             )
         ]
