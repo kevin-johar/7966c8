@@ -6,14 +6,14 @@ from .conversation import Conversation
 from .user import User
 
 class ConversationUserReadStatus(utils.CustomModel):
-    conversationId = models.ForeignKey(
+    conversation = models.ForeignKey(
         Conversation, 
         on_delete=models.CASCADE,
         db_column="conversationId",
         related_name="+"
     )
 
-    userId = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         db_column="userId",

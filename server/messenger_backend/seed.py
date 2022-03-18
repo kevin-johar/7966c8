@@ -47,13 +47,12 @@ def seed():
     )
     messages.save()
 
-    # userId = User.objects.filter(username="santiago")[0]
-    # conversationId = Conversation.objects[0]
 
-    # conversationUserReadStatus = ConversationUserReadStatus(userId=userId, conversationId=conversationId)
-    # conversationUserReadStatus.save()
-
-    # print(ConversationUserReadStatus.values())
+# Adding a read_status entry for thomas for the conversation involving him and santiago
+    userId = User.objects.filter(username="santiago").values('id')[0]['id']
+    conversationId = Conversation.objects.values('id')[0]['id']
+    conversationUserReadStatus = ConversationUserReadStatus(user_id=userId, conversation_id=conversationId)
+    conversationUserReadStatus.save()
 
     chiumbo = User(
         username="chiumbo",
