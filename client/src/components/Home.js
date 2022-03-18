@@ -95,6 +95,19 @@ const Home = ({ user, logout }) => {
     [setConversations, conversations],
   );
 
+  const updateReadStatus = async (username) => {
+    const conversationId = conversations.filter(
+      conversation => conversation?.otherUser?.username === username
+    ).map(convo => convo.id)[0];
+
+    try {
+      const { data } = await axios.post(`/api/conversations/${conversationId}/users/${userId}read`);
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const addMessageToConversation = useCallback((data) => {
       // if sender isn't null, that means the message needs to be put in a brand new convo
       const { message, sender = null } = data;
@@ -124,7 +137,10 @@ const Home = ({ user, logout }) => {
   );
 
   const setActiveChat = (username) => {
-    setActiveConversation(username);
+    if(activeConversation !== username) {
+      setActiveConversation(username);
+      updateReadStatus(username);
+    }
   };
 
   const addOnlineUser = useCallback((id) => {
