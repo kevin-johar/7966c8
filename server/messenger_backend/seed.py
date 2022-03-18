@@ -47,15 +47,13 @@ def seed():
     )
     messages.save()
 
-    # userId = User.objects.filter(username="santiago").values('id')[0]['id']
-    # conversationId = Conversation.objects.values('id')[0]['id']
-    userId = User.objects.filter(username="santiago")[0]
-    conversationId = Conversation.objects[0]
+    # userId = User.objects.filter(username="santiago")[0]
+    # conversationId = Conversation.objects[0]
 
-    conversationUserReadStatus = ConversationUserReadStatus(userId=userId, conversationId=conversationId)
-    conversationUserReadStatus.save()
+    # conversationUserReadStatus = ConversationUserReadStatus(userId=userId, conversationId=conversationId)
+    # conversationUserReadStatus.save()
 
-    print(ConversationUserReadStatus.values())
+    # print(ConversationUserReadStatus.values())
 
     chiumbo = User(
         username="chiumbo",
