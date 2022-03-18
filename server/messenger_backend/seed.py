@@ -49,10 +49,10 @@ def seed():
 
 
 # Adding a read_status entry for thomas for the conversation involving him and santiago
-    userId = User.objects.filter(username="santiago").values('id')[0]['id']
-    conversationId = Conversation.objects.values('id')[0]['id']
-    conversationUser = ConversationUser(user_id=userId, conversation_id=conversationId)
-    conversationUser.save()
+    # userId = User.objects.filter(username="santiago").values('id')[0]['id']
+    # conversationId = Conversation.objects.values('id')[0]['id']
+    # conversationUser = ConversationUser(user_id=userId, conversation_id=conversationId)
+    # conversationUser.save()
 
     chiumbo = User(
         username="chiumbo",
