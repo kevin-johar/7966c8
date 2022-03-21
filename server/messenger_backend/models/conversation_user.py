@@ -33,12 +33,12 @@ class ConversationUser(utils.CustomModel):
     # Tracks when last read status was
     updatedAt = models.DateTimeField(auto_now=True)
 
-    # Find read status timestamp given conversationId and userId
-    def find_conversation_user(conversationId, userId):
+    def get_conversation_user(conversationId, userId):
         try:
-            return Conversation.objects.get(
-                conversationId=conversationId, 
-                userId=userId
+            return ConversationUser.objects.get(
+                Q(user__id=userId), 
+                Q(conversation__id=conversationId)
             )
         except ConversationUser.DoesNotExist:
+            print('No Conversation-User found!')
             return None
