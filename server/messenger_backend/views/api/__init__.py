@@ -1,4 +1,4 @@
 from .conversations import Conversations
 from .messages import Messages
 from .users import Username
-from .conversation_user import ConversationsUser
+from .conversation_user import ConversationUser
