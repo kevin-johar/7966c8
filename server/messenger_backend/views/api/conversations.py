@@ -2,7 +2,7 @@ from django.contrib.auth.middleware import get_user
 from django.db.models import Max, Q
 from django.db.models.query import Prefetch
 from django.http import HttpResponse, JsonResponse
-from messenger_backend.models import Conversation, Message
+from messenger_backend.models import Conversation, Message, ConversationUser
 from online_users import online_users
 from rest_framework.views import APIView
 from rest_framework.request import Request
@@ -34,12 +34,16 @@ class Conversations(APIView):
             conversations_response = []
 
             for convo in conversations:
+                # Get last read value of current convo for current user
+                lastRead = ConversationUser.get_conversation_user(convo.id, user_id).lastRead
+
                 convo_dict = {
                     "id": convo.id,
                     "messages": [
                         message.to_dict(["id", "text", "senderId", "createdAt"])
                         for message in convo.messages.all()
                     ],
+                    "lastRead": lastRead 
                 }
 
                 # set properties for notification count and latest message preview
@@ -51,6 +55,12 @@ class Conversations(APIView):
                     convo_dict["otherUser"] = convo.user1.to_dict(user_fields)
                 elif convo.user2 and convo.user2.id != user_id:
                     convo_dict["otherUser"] = convo.user2.to_dict(user_fields)
+
+                # Last read status for other user
+                if convo_dict["otherUser"]["id"]:
+                     lastRead = ConversationUser.get_conversation_user(convo.id, convo_dict["otherUser"]["id"]).lastRead
+                     if lastRead is not None:
+                         convo_dict["otherUser"]["lastRead"] = lastRead
 
                 # set property for online status of the other user
                 if convo_dict["otherUser"]["id"] in online_users:
