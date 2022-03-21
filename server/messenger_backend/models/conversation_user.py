@@ -20,6 +20,8 @@ class ConversationUser(utils.CustomModel):
         related_name="+"
     )
 
+    lastRead = models.DateTimeField()
+
     class Meta: 
         constraints = [
             models.UniqueConstraint(
@@ -30,14 +32,13 @@ class ConversationUser(utils.CustomModel):
 
     # Necessary for debugging purposes
     createdAt = models.DateTimeField(auto_now_add=True, db_index=True)
-    # Tracks when last read status was
     updatedAt = models.DateTimeField(auto_now=True)
 
     def get_conversation_user(conversationId, userId):
         try:
             return ConversationUser.objects.get(
-                Q(user__id=userId), 
-                Q(conversation__id=conversationId)
+                Q(user_id=userId), 
+                Q(conversation_id=conversationId)
             )
         except ConversationUser.DoesNotExist:
             print('No Conversation-User found!')
