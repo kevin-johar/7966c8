@@ -95,14 +95,14 @@ const Home = ({ user, logout }) => {
     [setConversations, conversations],
   );
 
-  const updateReadStatus = async (username) => {
+  const updateLastReadDate = async (username) => {
     const conversationId = conversations.filter(
       conversation => conversation?.otherUser?.username === username
     ).map(convo => convo.id)[0];
 
     try {
-      const { data } = await axios.post(`/api/conversations/${conversationId}/users/${user.id}read`);
-      console.log(data);
+      // Update current user's last_read date for the active conversation
+      await axios.post(`/api/conversation/${conversationId}/user/${user.id}/read`);
     } catch (error) {
       console.error(error);
     }
@@ -139,7 +139,7 @@ const Home = ({ user, logout }) => {
   const setActiveChat = (username) => {
     if(activeConversation !== username) {
       setActiveConversation(username);
-      updateReadStatus(username);
+      updateLastReadDate(username);
     }
   };
 
