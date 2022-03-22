@@ -100,7 +100,7 @@ const Home = ({ user, logout }) => {
       conversation => conversation?.otherUser?.username === username
     )[0];
 
-    // Do nothing if conversation has no id (not saved to server)
+    // Do nothing if new, empty conversation (no conversationId or messages)
     const conversationId = conversation?.id;
     if (!conversationId || conversation?.messages?.length === 0) {
       return;
