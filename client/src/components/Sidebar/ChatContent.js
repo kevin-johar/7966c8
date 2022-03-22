@@ -19,20 +19,22 @@ const useStyles = makeStyles((theme) => ({
     letterSpacing: -0.17,
   },
   unread: {
-    fontWeight: "bold",
+    color: "#000000",
+    fontWeight: "bold"
   }
 }));
 
-const ChatContent = ({ conversation }) => {
+const ChatContent = ({ conversation, currentUser }) => {
   const classes = useStyles();
 
   const { otherUser, messages } = conversation;
-  const { messageId } = otherUser; 
   const latestMessageText = conversation.id && conversation.latestMessageText;
-
+  
+  const messageId = conversation?.lastRead?.messageId;
+  const lastMessage = messages[messages?.length - 1];
+  console.log(lastMessage)
   // If lastRead.messageId is not equal to the last message in the conversation
-  const unreadBold = messages[messages?.length - 1].id !== messageId ? classes.unread : '';
-  console.log(unreadBold);
+  const unreadBold = lastMessage.id !== messageId && lastMessage?.senderId !== currentUser?.id ? classes.unread : '';
 
   return (
     <Box className={classes.root}>
@@ -40,7 +42,7 @@ const ChatContent = ({ conversation }) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        <Typography className={classes.previewText}>
+        <Typography className={`${classes.previewText} ${unreadBold}`}>
           {latestMessageText}
         </Typography>
       </Box>

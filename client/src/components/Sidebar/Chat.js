@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Chat = ({ conversation, setActiveChat }) => {
+const Chat = ({ conversation, setActiveChat, user }) => {
   const classes = useStyles();
   const { otherUser } = conversation;
 
@@ -33,7 +33,9 @@ const Chat = ({ conversation, setActiveChat }) => {
         online={otherUser.online}
         sidebar={true}
       />
-      <ChatContent conversation={conversation} />
+      <ChatContent 
+      currentUser={user}
+      conversation={conversation} />
     </Box>
   );
 };
