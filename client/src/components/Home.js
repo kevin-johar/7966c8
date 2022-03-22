@@ -108,14 +108,10 @@ const Home = ({ user, logout }) => {
     // Last message's ID
     const lastReadMessageId = conversation?.messages[conversation?.messages?.length -1].id;
 
-    try {
-      // Update current user's last_read date for the active conversation
-      await axios.post(`/api/conversation/${conversationId}/user/${user.id}/read`, {
-        lastReadMessageId
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    // Update current user's last_read date for the active conversation
+    axios.post(`/api/conversation/${conversationId}/user/${user.id}/read`, {
+      lastReadMessageId
+    }).catch((e) => console.error(e));
   };
 
   const addMessageToConversation = useCallback((data) => {
