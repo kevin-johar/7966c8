@@ -96,13 +96,23 @@ const Home = ({ user, logout }) => {
   );
 
   const updateLastReadDate = async (username) => {
-    const conversationId = conversations.filter(
+    const conversation = conversations.filter(
       conversation => conversation?.otherUser?.username === username
-    ).map(convo => convo.id)[0];
+    )[0];
+
+    // Do nothing if conversation has no id (not saved to server)
+    const conversationId = conversation?.id;
+    if (!conversationId || conversation?.messages?.length === 0) {
+      return;
+    }
+    // Last message's ID
+    const lastReadMessageId = conversation?.messages[conversation?.messages?.length -1].id;
 
     try {
       // Update current user's last_read date for the active conversation
-      await axios.post(`/api/conversation/${conversationId}/user/${user.id}/read`);
+      await axios.post(`/api/conversation/${conversationId}/user/${user.id}/read`, {
+        lastReadMessageId
+      });
     } catch (error) {
       console.error(error);
     }
