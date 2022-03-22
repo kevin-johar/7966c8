@@ -1,9 +1,11 @@
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
 
 from . import utils
 from .conversation import Conversation
 from .user import User
+from .message import Message
 
 class ConversationUser(utils.CustomModel):
     conversation = models.ForeignKey(
@@ -20,7 +22,14 @@ class ConversationUser(utils.CustomModel):
         related_name="+"
     )
 
-    lastRead = models.DateTimeField()
+    lastReadMessageId = models.ForeignKey(
+        Message, 
+        on_delete=models.CASCADE,
+        db_column="messageId",
+        related_name="+"
+    )
+
+    lastReadDate = models.DateTimeField(default=timezone.now)
 
     class Meta: 
         constraints = [
