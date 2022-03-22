@@ -117,7 +117,8 @@ const Home = ({ user, logout }) => {
       return convo;
     });
 
-    setConversations(...conversationsCopy)
+    // Update last read status seemingly synchronously
+    setConversations([...conversationsCopy])
 
     // Update current user's last_read date for the active conversation
     return axios.post(`/api/conversation/${conversationId}/user/${user.id}/read`, {
