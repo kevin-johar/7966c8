@@ -95,7 +95,7 @@ const Home = ({ user, logout }) => {
     [setConversations, conversations],
   );
 
-  const updateLastReadDate = async (username) => {
+  const updateLastReadDate = (username) => {
     const conversation = conversations.filter(
       conversation => conversation?.otherUser?.username === username
     )[0];
@@ -109,7 +109,7 @@ const Home = ({ user, logout }) => {
     const lastReadMessageId = conversation?.messages[conversation?.messages?.length -1].id;
 
     // Update current user's last_read date for the active conversation
-    axios.post(`/api/conversation/${conversationId}/user/${user.id}/read`, {
+    return axios.post(`/api/conversation/${conversationId}/user/${user.id}/read`, {
       lastReadMessageId
     }).catch((e) => console.error(e));
   };
@@ -145,7 +145,7 @@ const Home = ({ user, logout }) => {
   const setActiveChat = (username) => {
     if(activeConversation !== username) {
       setActiveConversation(username);
-      updateLastReadDate(username);
+      const promise = updateLastReadDate(username);
     }
   };
 
