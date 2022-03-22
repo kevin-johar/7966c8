@@ -35,7 +35,7 @@ class Conversations(APIView):
 
             for convo in conversations:
                 # Get last read value of current convo for current user
-                lastRead = ConversationUser.get_conversation_user(convo.id, user_id).lastRead
+                # lastRead = ConversationUser.get_conversation_user(convo.id, user_id).lastRead
 
                 convo_dict = {
                     "id": convo.id,
@@ -43,7 +43,7 @@ class Conversations(APIView):
                         message.to_dict(["id", "text", "senderId", "createdAt"])
                         for message in convo.messages.all()
                     ],
-                    "lastRead": lastRead 
+                    # "lastRead": lastRead 
                 }
 
                 # set properties for notification count and latest message preview
@@ -57,10 +57,10 @@ class Conversations(APIView):
                     convo_dict["otherUser"] = convo.user2.to_dict(user_fields)
 
                 # Last read status for other user
-                if convo_dict["otherUser"]["id"]:
-                     lastRead = ConversationUser.get_conversation_user(convo.id, convo_dict["otherUser"]["id"]).lastRead
-                     if lastRead is not None:
-                         convo_dict["otherUser"]["lastRead"] = lastRead
+                # if convo_dict["otherUser"]["id"]:
+                #      lastRead = ConversationUser.get_conversation_user(convo.id, convo_dict["otherUser"]["id"]).lastRead
+                #      if lastRead is not None:
+                #          convo_dict["otherUser"]["lastRead"] = lastRead
 
                 # set property for online status of the other user
                 if convo_dict["otherUser"]["id"] in online_users:
