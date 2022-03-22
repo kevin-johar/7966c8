@@ -101,12 +101,23 @@ const Home = ({ user, logout }) => {
     )[0];
 
     // Do nothing if new, empty conversation (no conversationId or messages)
-    const conversationId = conversation?.id;
-    if (!conversationId || conversation?.messages?.length === 0) {
+    if (!conversation?.id || conversation?.messages?.length === 0) {
       return;
     }
-    // Last message's ID
+    const conversationId = conversation?.id;
     const lastReadMessageId = conversation?.messages[conversation?.messages?.length -1].id;
+
+    const conversationsCopy = conversations.map((convo) => {
+      if (convo?.id === conversationId) {
+        return {...convo, lastRead: {
+          date: new Date().toISOString(),
+          messageId: lastReadMessageId
+        }}
+      }
+      return convo;
+    });
+
+    setConversations(...conversationsCopy)
 
     // Update current user's last_read date for the active conversation
     return axios.post(`/api/conversation/${conversationId}/user/${user.id}/read`, {
@@ -145,7 +156,7 @@ const Home = ({ user, logout }) => {
   const setActiveChat = (username) => {
     if(activeConversation !== username) {
       setActiveConversation(username);
-      const promise = updateLastReadDate(username);
+      updateLastReadDate(username);
     }
   };
 

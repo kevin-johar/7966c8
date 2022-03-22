@@ -18,13 +18,21 @@ const useStyles = makeStyles((theme) => ({
     color: "#9CADC8",
     letterSpacing: -0.17,
   },
+  unread: {
+    fontWeight: "bold",
+  }
 }));
 
 const ChatContent = ({ conversation }) => {
   const classes = useStyles();
 
-  const { otherUser } = conversation;
+  const { otherUser, messages } = conversation;
+  const { messageId } = otherUser; 
   const latestMessageText = conversation.id && conversation.latestMessageText;
+
+  // If lastRead.messageId is not equal to the last message in the conversation
+  const unreadBold = messages[messages?.length - 1].id !== messageId ? classes.unread : '';
+  console.log(unreadBold);
 
   return (
     <Box className={classes.root}>
