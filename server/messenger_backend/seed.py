@@ -51,7 +51,9 @@ def seed():
 # Adding a read_status entry for thomas for the conversation involving him and santiago
     userId = User.objects.filter(username="thomas").values('id')[0]['id']
     conversationId = Conversation.objects.values('id')[0]['id']
-    conversationUser = ConversationUser(user_id=userId, conversation_id=conversationId)
+    messages = Message.objects.filter(conversation_id=conversationId).values('id')
+    messageId = messages.last()["id"]
+    conversationUser = ConversationUser(user_id=userId, conversation_id=conversationId, message_id=messageId)
     conversationUser.save()
 
     chiumbo = User(

@@ -22,7 +22,7 @@ class ConversationUser(utils.CustomModel):
         related_name="+"
     )
 
-    lastReadMessageId = models.ForeignKey(
+    message = models.ForeignKey(
         Message, 
         on_delete=models.CASCADE,
         db_column="messageId",
