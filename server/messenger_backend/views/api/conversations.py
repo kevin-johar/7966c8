@@ -34,21 +34,20 @@ class Conversations(APIView):
             conversations_response = []
 
             for convo in conversations:
+                convo_dict = {
+                    "id": convo.id,
+                    "messages": [
+                        message.to_dict(["id", "text", "senderId", "createdAt"])
+                        for message in convo.messages.all()
+                    ]
+                }
+
                 # Get last read value of current convo for current user
                 conversationUser = ConversationUser.get_conversation_user(convo.id, user_id)
                 if conversationUser is not None:
-                    lastRead = {
+                    convo_dict["lastRead"] = {
                         "date": conversationUser.lastReadDate,
                         "messageId": conversationUser.message_id
-                    }
-
-                    convo_dict = {
-                        "id": convo.id,
-                        "messages": [
-                            message.to_dict(["id", "text", "senderId", "createdAt"])
-                            for message in convo.messages.all()
-                        ],
-                        "lastRead": lastRead
                     }
 
                 # set properties for notification count and latest message preview
