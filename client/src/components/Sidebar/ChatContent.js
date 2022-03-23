@@ -48,12 +48,21 @@ const ChatContent = ({ conversation, currentUser }) => {
   const lastMessage = messages[messages?.length - 1];
 
   const numberOfUnreadMessages = () => {
-    // If lastRead.messageId is not equal to the last message in the conversation
-    if (lastMessage?.id !== lastReadMessageId && lastMessage?.senderId !== currentUser?.id) {
-      const index = messages.findIndex((message) => message?.id === lastReadMessageId);
-      return (index !== -1 ? [...messages].splice(index+1).length : 0);
+    // If you're last sender, or if the last sent message is your last message read:
+    // you've read all messages
+    if (lastMessage?.senderId === currentUser?.id || lastMessage?.id === lastReadMessageId) {
+      return 0;
     }
-    return 0;
+
+    // If conversation has never been opened, there would be no lastRead property
+    if(!conversation?.lastRead) {
+      console.log('New Convo: ', conversation?.otherUser?.username);
+      return messages?.length;
+    }
+
+    // If lastRead.messageId is not equal to the last message in the conversation (read all messages)
+    const index = messages.findIndex((message) => message?.id === lastReadMessageId);
+    return (index !== -1 ? [...messages].splice(index+1).length : 0);
   };
 
   const unreadBold = numberOfUnreadMessages() !== 0 ? classes.unread : '';
