@@ -43,14 +43,14 @@ const ChatContent = ({ conversation, currentUser }) => {
   const { otherUser, messages } = conversation;
   const latestMessageText = conversation.id && conversation.latestMessageText;
   
-  const messageId = conversation?.lastRead?.messageId;
+  const lastReadMessageId = conversation?.lastRead?.messageId;
 
   const lastMessage = messages[messages?.length - 1];
 
   const numberOfUnreadMessages = () => {
     // If lastRead.messageId is not equal to the last message in the conversation
-    if (lastMessage.id !== messageId && lastMessage?.senderId !== currentUser?.id) {
-      const index = messages.findIndex((message) => message?.id === messageId);
+    if (lastMessage?.id !== lastReadMessageId && lastMessage?.senderId !== currentUser?.id) {
+      const index = messages.findIndex((message) => message?.id === lastReadMessageId);
       return (index !== -1 ? [...messages].splice(index+1).length : 0);
     }
     return 0;
