@@ -95,7 +95,7 @@ const Home = ({ user, logout }) => {
     [setConversations, conversations],
   );
 
-  const updateLastReadDate = (username) => {
+  const updateLastReadDate = useCallback((username) => {
     const conversation = conversations.filter(
       conversation => conversation?.otherUser?.username === username
     )[0];
@@ -110,7 +110,7 @@ const Home = ({ user, logout }) => {
     const conversationsCopy = conversations.map((convo) => {
       if (convo?.id === conversationId) {
         return {...convo, lastRead: {
-          date: Date.now().toISOString(),
+          date: Date.now(),
           messageId: lastReadMessageId
         }}
       }
@@ -124,7 +124,7 @@ const Home = ({ user, logout }) => {
     return axios.post(`/api/conversation/${conversationId}/user/${user.id}/read`, {
       lastReadMessageId
     }).catch((e) => console.error(e));
-  };
+  }, [setConversations, conversations, user.id]);
 
   const addMessageToConversation = useCallback((data) => {
       // if sender isn't null, that means the message needs to be put in a brand new convo
@@ -196,6 +196,7 @@ const Home = ({ user, logout }) => {
     socket.on("add-online-user", addOnlineUser);
     socket.on("remove-offline-user", removeOfflineUser);
     socket.on("new-message", addMessageToConversation);
+    socket.on("new-message", (...args) => updateLastReadDate(activeConversation));
 
     return () => {
       // before the component is destroyed
@@ -203,8 +204,9 @@ const Home = ({ user, logout }) => {
       socket.off("add-online-user", addOnlineUser);
       socket.off("remove-offline-user", removeOfflineUser);
       socket.off("new-message", addMessageToConversation);
+      socket.off("new-message", updateLastReadDate);
     };
-  }, [addMessageToConversation, addOnlineUser, removeOfflineUser, socket]);
+  }, [addMessageToConversation, addOnlineUser, removeOfflineUser, updateLastReadDate, activeConversation, socket]);
 
   useEffect(() => {
     // when fetching, prevent redirect
