@@ -65,7 +65,7 @@ const Home = ({ user, logout }) => {
   const postMessage = async (body) => {
     try {
       const data = await saveMessage(body);
-
+      console.log('Posting message: ', data, body);
       if (!body.conversationId) {
         addNewConvo(body.recipientId, data.message);
       } else {
@@ -102,6 +102,8 @@ const Home = ({ user, logout }) => {
       conversation => conversation?.otherUser?.username === opts?.username
     )[0];
 
+    console.log('Conversation: ', conversation?.lastRead);
+
     const conversationId = conversation?.id || opts?.conversationId;
 
     const lastReadMessageId = conversation?.messages[conversation?.messages?.length -1]?.id;
@@ -133,6 +135,8 @@ const Home = ({ user, logout }) => {
   const addMessageToConversation = useCallback((data) => {
       const { message, sender = null } = data;
 
+      console.log('Adding to Conversation: ', sender, message);
+
       // if sender isn't null, that means the message needs to be put in a brand new convo
       if (sender !== null) {
         const newConvo = {
@@ -142,6 +146,7 @@ const Home = ({ user, logout }) => {
         };
         newConvo.latestMessageText = message.text;
         setConversations((prev) => [newConvo, ...prev]);
+        return;
       }
 
       const tempConversations = [...conversations];
@@ -154,6 +159,8 @@ const Home = ({ user, logout }) => {
         }
         return convo;
       });
+
+      console.log('New Conversations: ', tempConversations);
 
       setConversations(tempConversations);
     },
@@ -202,7 +209,10 @@ const Home = ({ user, logout }) => {
     socket.on("add-online-user", addOnlineUser);
     socket.on("remove-offline-user", removeOfflineUser);
     socket.on("new-message", addMessageToConversation);
-    socket.on("new-message", (...args) => updateLastReadDate({username: activeConversation}));
+    socket.on("new-message", (...args) => {
+      console.log('nice');
+      updateLastReadDate({username: activeConversation});
+    });
 
     return () => {
       // before the component is destroyed
