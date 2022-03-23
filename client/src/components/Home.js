@@ -60,7 +60,6 @@ const Home = ({ user, logout }) => {
       recipientId: body.recipientId,
       sender: data.sender,
     });
-    updateLastReadDate(activeConversation);
   };
 
   const postMessage = async (body) => {
