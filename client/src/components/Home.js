@@ -60,6 +60,7 @@ const Home = ({ user, logout }) => {
       recipientId: body.recipientId,
       sender: data.sender,
     });
+    updateLastReadDate(activeConversation);
   };
 
   const postMessage = async (body) => {
@@ -127,8 +128,9 @@ const Home = ({ user, logout }) => {
   }, [setConversations, conversations, user.id]);
 
   const addMessageToConversation = useCallback((data) => {
-      // if sender isn't null, that means the message needs to be put in a brand new convo
       const { message, sender = null } = data;
+
+      // if sender isn't null, that means the message needs to be put in a brand new convo
       if (sender !== null) {
         const newConvo = {
           id: message.conversationId,
