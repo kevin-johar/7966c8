@@ -74,6 +74,7 @@ const Home = ({ user, logout }) => {
       }
 
       sendMessage(data, body);
+      updateLastReadDate({username: activeConversation, conversationId: data.message.conversationId});
     } catch (error) {
       console.error(error);
     }
@@ -96,17 +97,19 @@ const Home = ({ user, logout }) => {
     [setConversations, conversations],
   );
 
-  const updateLastReadDate = useCallback((username) => {
+  const updateLastReadDate = useCallback((opts) => {
     const conversation = conversations.filter(
-      conversation => conversation?.otherUser?.username === username
+      conversation => conversation?.otherUser?.username === opts?.username
     )[0];
 
-    // Do nothing if new, empty conversation (no conversationId or messages)
-    if (!conversation?.id || conversation?.messages?.length === 0) {
+    const conversationId = conversation?.id || opts?.conversationId;
+
+    const lastReadMessageId = conversation?.messages[conversation?.messages?.length -1]?.id;
+
+    // If reopening already read conversation, no update necessary
+    if (conversation?.lastRead?.messageId === lastReadMessageId) {
       return;
     }
-    const conversationId = conversation?.id;
-    const lastReadMessageId = conversation?.messages[conversation?.messages?.length -1].id;
 
     const conversationsCopy = conversations.map((convo) => {
       if (convo?.id === conversationId) {
@@ -160,7 +163,7 @@ const Home = ({ user, logout }) => {
   const setActiveChat = (username) => {
     if(activeConversation !== username) {
       setActiveConversation(username);
-      updateLastReadDate(username);
+      updateLastReadDate({username});
     }
   };
 
@@ -199,7 +202,7 @@ const Home = ({ user, logout }) => {
     socket.on("add-online-user", addOnlineUser);
     socket.on("remove-offline-user", removeOfflineUser);
     socket.on("new-message", addMessageToConversation);
-    socket.on("new-message", (...args) => updateLastReadDate(activeConversation));
+    socket.on("new-message", (...args) => updateLastReadDate({username: activeConversation}));
 
     return () => {
       // before the component is destroyed
