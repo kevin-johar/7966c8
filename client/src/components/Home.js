@@ -110,7 +110,7 @@ const Home = ({ user, logout }) => {
     const conversationsCopy = conversations.map((convo) => {
       if (convo?.id === conversationId) {
         return {...convo, lastRead: {
-          date: new Date().toISOString(),
+          date: Date.now().toISOString(),
           messageId: lastReadMessageId
         }}
       }
