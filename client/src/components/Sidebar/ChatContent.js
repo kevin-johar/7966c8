@@ -20,7 +20,20 @@ const useStyles = makeStyles((theme) => ({
   },
   unread: {
     color: "#000000",
-    fontWeight: "bold"
+    fontWeight: "bold",
+  },
+  unreadNumberContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0 15px'
+  },
+  unreadNumber: {
+    backgroundColor: "#0084FF",
+    color: "#FFFFFF",
+    borderRadius: '50%',
+    aspectRatio: 1,
+    height: '24px',
+    textAlign: 'center',
   }
 }));
 
@@ -31,10 +44,25 @@ const ChatContent = ({ conversation, currentUser }) => {
   const latestMessageText = conversation.id && conversation.latestMessageText;
   
   const messageId = conversation?.lastRead?.messageId;
+  const date = conversation?.lastRead?.date;
+
+  if (otherUser?.username === "santiago") {
+    console.log(date);
+    console.log(messageId);
+  }
+
   const lastMessage = messages[messages?.length - 1];
-  console.log(lastMessage)
-  // If lastRead.messageId is not equal to the last message in the conversation
-  const unreadBold = lastMessage.id !== messageId && lastMessage?.senderId !== currentUser?.id ? classes.unread : '';
+
+  const numberOfUnreadMessages = () => {
+    // If lastRead.messageId is not equal to the last message in the conversation
+    if (lastMessage.id !== messageId && lastMessage?.senderId !== currentUser?.id) {
+      const index = messages.findIndex((message) => message?.id === messageId);
+      return (index !== -1 ? [...messages].splice(index+1).length : 0);
+    }
+    return 0;
+  };
+
+  const unreadBold = numberOfUnreadMessages() !== 0 ? classes.unread : '';
 
   return (
     <Box className={classes.root}>
@@ -46,6 +74,11 @@ const ChatContent = ({ conversation, currentUser }) => {
           {latestMessageText}
         </Typography>
       </Box>
+      {numberOfUnreadMessages() > 0 && <Box className={classes.unreadNumberContainer}>
+        <Typography className={classes.unreadNumber}>
+          { numberOfUnreadMessages() }
+        </Typography>
+      </Box>}
     </Box>
   );
 };
