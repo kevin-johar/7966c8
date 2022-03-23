@@ -44,12 +44,6 @@ const ChatContent = ({ conversation, currentUser }) => {
   const latestMessageText = conversation.id && conversation.latestMessageText;
   
   const messageId = conversation?.lastRead?.messageId;
-  const date = conversation?.lastRead?.date;
-
-  if (otherUser?.username === "santiago") {
-    console.log(date);
-    console.log(messageId);
-  }
 
   const lastMessage = messages[messages?.length - 1];
 
