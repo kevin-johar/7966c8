@@ -56,7 +56,6 @@ const ChatContent = ({ conversation, currentUser }) => {
 
     // If conversation has never been opened, there would be no lastRead property
     if(!conversation?.lastRead) {
-      console.log('New Convo: ', conversation?.otherUser?.username);
       return messages?.length;
     }
 
