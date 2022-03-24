@@ -13,8 +13,8 @@ const useStyles = makeStyles((theme) => ({
   readIcon: {
     height: 15,
     width: 15,
-    marginRight: 11,
     marginTop: 6,
+    marginBottom: 15,
   }
 }));
 
