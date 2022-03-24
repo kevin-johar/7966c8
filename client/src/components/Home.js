@@ -129,7 +129,7 @@ const Home = ({ user, logout }) => {
     return axios.post(`/api/conversation/${conversationId}/user/${user.id}/read`, {
       lastReadMessageId
     }).catch((e) => console.error(e));
-  }, [setConversations, conversations, user.id]);
+  }, [setConversations, conversations, user.id, activeConversation]);
 
   const addMessageToConversation = useCallback((data) => {
       const { message, sender = null } = data;
