@@ -65,7 +65,6 @@ const Home = ({ user, logout }) => {
   const postMessage = async (body) => {
     try {
       const data = await saveMessage(body);
-      console.log('Posting message: ', data, body);
       if (!body.conversationId) {
         addNewConvo(body.recipientId, data.message);
       } else {
@@ -98,11 +97,11 @@ const Home = ({ user, logout }) => {
   );
 
   const updateLastReadDate = useCallback((opts) => {
-    const conversation = conversations.filter(
-      conversation => conversation?.otherUser?.username === opts?.username
-    )[0];
+  const username = opts?.username || activeConversation;
 
-    console.log('Conversation: ', conversation?.lastRead);
+    const conversation = conversations.filter(
+      conversation => conversation?.otherUser?.username === username
+    )[0];
 
     const conversationId = conversation?.id || opts?.conversationId;
 
@@ -135,8 +134,6 @@ const Home = ({ user, logout }) => {
   const addMessageToConversation = useCallback((data) => {
       const { message, sender = null } = data;
 
-      console.log('Adding to Conversation: ', sender, message);
-
       // if sender isn't null, that means the message needs to be put in a brand new convo
       if (sender !== null) {
         const newConvo = {
@@ -159,8 +156,6 @@ const Home = ({ user, logout }) => {
         }
         return convo;
       });
-
-      console.log('New Conversations: ', tempConversations);
 
       setConversations(tempConversations);
     },
@@ -209,10 +204,7 @@ const Home = ({ user, logout }) => {
     socket.on("add-online-user", addOnlineUser);
     socket.on("remove-offline-user", removeOfflineUser);
     socket.on("new-message", addMessageToConversation);
-    socket.on("new-message", (...args) => {
-      console.log('nice');
-      updateLastReadDate({username: activeConversation});
-    });
+    socket.on("new-message", updateLastReadDate);
 
     return () => {
       // before the component is destroyed
