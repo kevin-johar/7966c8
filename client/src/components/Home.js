@@ -96,7 +96,31 @@ const Home = ({ user, logout }) => {
     [setConversations, conversations],
   );
 
-  const updateLastReadDate = useCallback((opts) => {
+  const otherUserReadStatus = useCallback((data) => {
+    const { otherUserId, conversationId, lastRead } = data;
+    const convos = conversations.map((convo) => {
+      // Only for relevant conversationId
+      if(convo?.id === conversationId) {
+        // If otherUser exists in the current conversation
+        if(convo?.otherUser?.id === otherUserId) {
+          // Only if lastReadStatus recieved is new information
+          if (convo?.otherUser?.lastRead?.messageId !== lastRead?.messageId) {
+            return {
+              ...convo, 
+              otherUser: {
+                ...convo?.otherUser, 
+                lastRead,
+              }};
+          }
+        }
+      }
+      return convo;
+    });
+
+    setConversations([...convos]);
+  }, [conversations]);
+
+  const updateLastReadDate = useCallback(async (opts) => {
   const username = opts?.username || activeConversation;
 
     const conversation = conversations.filter(
@@ -104,7 +128,6 @@ const Home = ({ user, logout }) => {
     )[0];
 
     const conversationId = conversation?.id || opts?.conversationId;
-
     const lastReadMessageId = conversation?.messages[conversation?.messages?.length -1]?.id;
 
     // If reopening already read conversation, no update necessary
@@ -112,24 +135,37 @@ const Home = ({ user, logout }) => {
       return;
     }
 
+    const date = Date.now()
+
     const conversationsCopy = conversations.map((convo) => {
       if (convo?.id === conversationId) {
         return {...convo, lastRead: {
-          date: Date.now(),
+          date,
           messageId: lastReadMessageId
         }}
       }
       return convo;
     });
 
-    // Update last read status seemingly synchronously
-    setConversations([...conversationsCopy])
+    try {
+      await axios.post(`/api/conversation/${conversationId}/user/${user?.id}/read`, {
+        lastReadMessageId
+      });
+    } catch(e) {
+      console.error(e);
+    }
 
-    // Update current user's last_read date for the active conversation
-    return axios.post(`/api/conversation/${conversationId}/user/${user.id}/read`, {
-      lastReadMessageId
-    }).catch((e) => console.error(e));
-  }, [setConversations, conversations, user.id, activeConversation]);
+    setConversations([...conversationsCopy]);
+
+    socket.emit("update-read-status", {
+      otherUserId: user?.id,
+      conversationId: conversationId,
+      lastRead: {
+        date,
+        messageId: lastReadMessageId, 
+      }
+    });
+  }, [setConversations, conversations, user.id, activeConversation, socket]);
 
   const addMessageToConversation = useCallback((data) => {
       const { message, sender = null } = data;
@@ -205,6 +241,7 @@ const Home = ({ user, logout }) => {
     socket.on("remove-offline-user", removeOfflineUser);
     socket.on("new-message", addMessageToConversation);
     socket.on("new-message", updateLastReadDate);
+    socket.on("update-read-status", otherUserReadStatus);
 
     return () => {
       // before the component is destroyed
@@ -213,8 +250,9 @@ const Home = ({ user, logout }) => {
       socket.off("remove-offline-user", removeOfflineUser);
       socket.off("new-message", addMessageToConversation);
       socket.off("new-message", updateLastReadDate);
+      socket.off("update-read-status", otherUserReadStatus);
     };
-  }, [addMessageToConversation, addOnlineUser, removeOfflineUser, updateLastReadDate, activeConversation, socket]);
+  }, [addMessageToConversation, addOnlineUser, removeOfflineUser, updateLastReadDate, otherUserReadStatus, socket]);
 
   useEffect(() => {
     // when fetching, prevent redirect
