@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography } from "@material-ui/core";
+import { Badge, Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -42,7 +42,7 @@ const ChatContent = ({ conversation, currentUser }) => {
 
   const { otherUser, messages } = conversation;
   const latestMessageText = conversation.id && conversation.latestMessageText;
-  
+
   const lastReadMessageId = conversation?.lastRead?.messageId;
 
   const lastMessage = messages[messages?.length - 1];
@@ -59,12 +59,13 @@ const ChatContent = ({ conversation, currentUser }) => {
       return messages?.length;
     }
 
-    // If lastRead.messageId is not equal to the last message in the conversation (read all messages)
+    // If lastRead.messageId is not equal to the last message in the conversation
     const index = messages.findIndex((message) => message?.id === lastReadMessageId);
     return (index !== -1 ? [...messages].splice(index+1).length : 0);
   };
 
-  const unreadBold = numberOfUnreadMessages() !== 0 ? classes.unread : '';
+  const unreadMessages = numberOfUnreadMessages();
+  const unreadBold = unreadMessages !== 0 ? classes.unread : '';
 
   return (
     <Box className={classes.root}>
@@ -76,11 +77,11 @@ const ChatContent = ({ conversation, currentUser }) => {
           {latestMessageText}
         </Typography>
       </Box>
-      {numberOfUnreadMessages() > 0 && <Box className={classes.unreadNumberContainer}>
-        <Typography className={classes.unreadNumber}>
-          { numberOfUnreadMessages() }
-        </Typography>
-      </Box>}
+      {unreadMessages > 0 && <Badge badgeContent={unreadMessages}
+                                    max={99}
+                                    style={{top: "20px", right: "35px"}}
+                                    color="primary">
+      </Badge>}
     </Box>
   );
 };
