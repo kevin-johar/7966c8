@@ -80,9 +80,7 @@ const Home = ({ user, logout }) => {
 
   const addNewConvo = useCallback(
     (recipientId, message) => {
-      const tempConversations = [...conversations];
-
-      tempConversations.map((convo) => {
+      const tempConversations = conversations.map((convo) => {
         if (convo.otherUser.id === recipientId) {
           convo.messages = [...convo.messages, message];
 
@@ -106,9 +104,9 @@ const Home = ({ user, logout }) => {
           // Only if lastReadStatus recieved is new information
           if (convo?.otherUser?.lastRead?.messageId !== lastRead?.messageId) {
             return {
-              ...convo, 
+              ...convo,
               otherUser: {
-                ...convo?.otherUser, 
+                ...convo?.otherUser,
                 lastRead,
               }};
           }
@@ -162,7 +160,7 @@ const Home = ({ user, logout }) => {
       conversationId: conversationId,
       lastRead: {
         date,
-        messageId: lastReadMessageId, 
+        messageId: lastReadMessageId,
       }
     });
   }, [setConversations, conversations, user.id, activeConversation, socket]);
