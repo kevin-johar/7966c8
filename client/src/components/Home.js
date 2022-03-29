@@ -119,7 +119,7 @@ const Home = ({ user, logout }) => {
   }, [conversations]);
 
   const updateLastReadDate = useCallback(async (opts) => {
-  const username = opts?.username || activeConversation;
+    const username = opts?.username || activeConversation;
 
     const conversation = conversations.filter(
       conversation => conversation?.otherUser?.username === username
@@ -146,7 +146,7 @@ const Home = ({ user, logout }) => {
     });
 
     try {
-      await axios.post(`/api/conversation/${conversationId}/user/${user?.id}/read`, {
+      await axios.put(`/api/conversation/${conversationId}/user/${user?.id}/read`, {
         lastReadMessageId
       });
     } catch(e) {

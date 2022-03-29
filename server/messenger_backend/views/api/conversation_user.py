@@ -4,7 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 
 class ConversationUserPair(APIView):
-    def post(self, request, conversationId, userId):
+    def put(self, request, conversationId, userId):
         body = request.data
         messageId = body.get("lastReadMessageId")
 
