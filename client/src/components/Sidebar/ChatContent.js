@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Badge, Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -47,7 +47,7 @@ const ChatContent = ({ conversation, currentUser }) => {
 
   const lastMessage = messages[messages?.length - 1];
 
-  const calculateUnreadCount = () => {
+  const unreadMessages = useMemo(() => {
     // If you're last sender, or if the last sent message is your last message read:
     // you've read all messages
     if (lastMessage?.senderId === currentUser?.id || lastMessage?.id === lastReadMessageId) {
@@ -62,9 +62,7 @@ const ChatContent = ({ conversation, currentUser }) => {
     // If lastRead.messageId is not equal to the last message in the conversation
     const index = messages.findIndex((message) => message?.id === lastReadMessageId);
     return (index !== -1 ? [...messages].splice(index+1).length : 0);
-  };
-
-  const unreadMessages = calculateUnreadCount();
+  }, [lastMessage, lastReadMessageId, conversation, messages, currentUser?.id]);
   const unreadBold = unreadMessages !== 0 ? classes.unread : '';
 
   return (
