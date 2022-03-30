@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from django.contrib.auth.middleware import get_user
-from messenger_backend.models import ConversationUser
+from messenger_backend.models import ConversationUser, Conversation
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 
@@ -12,6 +12,11 @@ class ConversationUserPair(APIView):
 
             if user.is_anonymous:
                 return HttpResponse(status=401)
+
+            conversation = Conversation.objects.get(id=conversation_id);
+
+            if (conversation.user1.id is not user.id) and (conversation.user2.id is not user.id):
+                return HttpResponse(status=403)
 
             body = request.data
             message_id = body.get("lastReadMessageId")

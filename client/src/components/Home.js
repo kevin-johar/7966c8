@@ -146,7 +146,7 @@ const Home = ({ user, logout }) => {
     });
 
     try {
-      await axios.put(`/api/conversation/${conversationId}/user/${user?.id}/read`, {
+      await axios.put(`/api/conversations/${conversationId}/read`, {
         lastReadMessageId
       });
     } catch(e) {
