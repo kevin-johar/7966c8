@@ -47,7 +47,7 @@ const ChatContent = ({ conversation, currentUser }) => {
 
   const lastMessage = messages[messages?.length - 1];
 
-  const numberOfUnreadMessages = () => {
+  const calculateUnreadCount = () => {
     // If you're last sender, or if the last sent message is your last message read:
     // you've read all messages
     if (lastMessage?.senderId === currentUser?.id || lastMessage?.id === lastReadMessageId) {
@@ -64,7 +64,7 @@ const ChatContent = ({ conversation, currentUser }) => {
     return (index !== -1 ? [...messages].splice(index+1).length : 0);
   };
 
-  const unreadMessages = numberOfUnreadMessages();
+  const unreadMessages = calculateUnreadCount();
   const unreadBold = unreadMessages !== 0 ? classes.unread : '';
 
   return (
