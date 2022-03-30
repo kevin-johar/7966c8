@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Box, Avatar } from '@material-ui/core';
 import { SenderBubble, OtherUserBubble } from '.';
 import moment from 'moment';
@@ -22,7 +22,21 @@ const Messages = (props) => {
   const { messages, otherUser, userId } = props;
   const classes = useStyles();
 
-  const readIcon = () => 
+  const lastReadMessageId = useMemo(() => {
+   const index = messages.findIndex(
+     (message) => message?.id === otherUser?.lastRead?.messageId
+   );
+
+   // From lastReadMessageId index go backwards to find the message not sent by the other user
+   for (let i = index; i >= 0; i--) {
+     if (messages[i]?.senderId !== otherUser?.id) {
+       return messages[i]?.id;
+     }
+   }
+   return -1;
+  }, [messages, otherUser?.lastRead?.messageId, otherUser?.id]);
+
+  const readIcon = () =>
     <Box className={classes.readIconContainer}>
       <Avatar
         alt={otherUser.username}
@@ -35,13 +49,12 @@ const Messages = (props) => {
     <Box>
       {messages.map((message) => {
         const time = moment(message.createdAt).format('h:mm');
-
-        const canShow = message?.id === otherUser?.lastRead?.messageId;
+        const canShow = lastReadMessageId >= 0 ? message?.id === lastReadMessageId: false;
 
         return message.senderId === userId ? (
           <Box key={message.id}>
             <SenderBubble
-            text={message.text} 
+            text={message.text}
             time={time} />
             {canShow && readIcon()}
           </Box>
@@ -52,7 +65,6 @@ const Messages = (props) => {
               time={time}
               otherUser={otherUser}
             />
-            {canShow && readIcon()}
           </Box>
         );
       })}

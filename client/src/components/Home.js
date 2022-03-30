@@ -126,14 +126,14 @@ const Home = ({ user, logout }) => {
     )[0];
 
     const conversationId = conversation?.id || opts?.conversationId;
-    const lastReadMessageId = conversation?.messages[conversation?.messages?.length -1]?.id;
+    const lastReadMessageId = conversation?.messages[conversation?.messages?.length - 1]?.id;
 
     // If reopening already read conversation, no update necessary
     if (conversation?.lastRead?.messageId === lastReadMessageId) {
       return;
     }
 
-    const date = Date.now()
+    const date = Date.now();
 
     const conversationsCopy = conversations.map((convo) => {
       if (convo?.id === conversationId) {
