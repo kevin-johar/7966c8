@@ -14,7 +14,6 @@ class ConversationUserPair(APIView):
                 return HttpResponse(status=401)
 
             conversation = Conversation.objects.get(id=conversation_id);
-
             if (conversation.user1.id is not user.id) and (conversation.user2.id is not user.id):
                 return HttpResponse(status=403)
 
