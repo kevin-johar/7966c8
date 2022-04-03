@@ -36,3 +36,7 @@ def logout(sid, user_id):
     if user_id in online_users:
         online_users.remove(user_id)
     sio.emit("remove-offline-user", user_id, skip_sid=sid)
+
+@sio.on("update-read-status")
+def sendLatestReadStatus(sid, read_data):
+    sio.emit("update-read-status", read_data, skip_sid=sid)

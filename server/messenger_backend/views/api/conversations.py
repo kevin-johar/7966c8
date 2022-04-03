@@ -2,7 +2,7 @@ from django.contrib.auth.middleware import get_user
 from django.db.models import Max, Q
 from django.db.models.query import Prefetch
 from django.http import HttpResponse, JsonResponse
-from messenger_backend.models import Conversation, Message
+from messenger_backend.models import Conversation, Message, ConversationUser
 from online_users import online_users
 from rest_framework.views import APIView
 from rest_framework.request import Request
@@ -23,7 +23,7 @@ class Conversations(APIView):
 
             conversations = (
                 Conversation.objects.filter(Q(user1=user_id) | Q(user2=user_id))
-                .prefetch_related(
+                .prefetch_related( 
                     Prefetch(
                         "messages", queryset=Message.objects.order_by("createdAt")
                     )
@@ -39,8 +39,16 @@ class Conversations(APIView):
                     "messages": [
                         message.to_dict(["id", "text", "senderId", "createdAt"])
                         for message in convo.messages.all()
-                    ],
+                    ]
                 }
+
+                # Get last read value of current convo for current user
+                conversationUser = ConversationUser.get_conversation_user(convo.id, user_id)
+                if conversationUser is not None:
+                    convo_dict["lastRead"] = {
+                        "date": conversationUser.lastReadDate,
+                        "messageId": conversationUser.message_id
+                    }
 
                 # set properties for notification count and latest message preview
                 convo_dict["latestMessageText"] = convo_dict["messages"][-1]["text"]
@@ -51,6 +59,17 @@ class Conversations(APIView):
                     convo_dict["otherUser"] = convo.user1.to_dict(user_fields)
                 elif convo.user2 and convo.user2.id != user_id:
                     convo_dict["otherUser"] = convo.user2.to_dict(user_fields)
+
+                # Last read status for other user
+                otherUserId = convo_dict["otherUser"]["id"]
+                if otherUserId:
+                    otherConversationUser = ConversationUser.get_conversation_user(convo.id, otherUserId)
+                     
+                    if otherConversationUser is not None:
+                        convo_dict["otherUser"]["lastRead"] = {
+                           "date": otherConversationUser.lastReadDate,
+                           "messageId": otherConversationUser.message_id
+                       }
 
                 # set property for online status of the other user
                 if convo_dict["otherUser"]["id"] in online_users:
