@@ -22,7 +22,8 @@ class ConversationUser(utils.CustomModel):
         related_name="+"
     )
 
-    message = models.ForeignKey(
+    # Can be null if a new conversation is made and otherUsers haven't opened it
+    readMessage = models.ForeignKey(
         Message, 
         on_delete=models.CASCADE,
         db_column="messageId",
